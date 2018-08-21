@@ -53,4 +53,8 @@
 -- Comportamiento: Devuelve True si la lista contiene un ítem igual al primer parámetro. Esto sólo sirve para los tipos que tienen Deriving Eq, osea que se sabe cuando son iguales.
 -- Ejemplos: elem 1 [1,2,3,4,5] = True, elem 14 [1..10] = False, elem 
 
+-- :
+-- Ejemplo = x:xs
+-- Comportamiento: Returns a list which has x as first element, followed by all elements in xs.
+
 
