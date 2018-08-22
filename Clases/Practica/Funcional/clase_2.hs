@@ -73,16 +73,16 @@ sum' xs = foldl (\acc x -> acc + x) 0 xs
 -- La funcion se puede escribir de otra forma, ya que \acc x -> acc+x es equivalente a (+). Tambien podemos omitir el parámetro xs, ya
 -- que se va a tomar en cuenta automáticamente dado el tipo de sum'' y el tipo de foldl, vía currying.
 sum'' :: (Num a) => [a] -> a
-sum '' = foldl (+) 0
+sum'' = foldl (+) 0
 
 -- Tambien se puede implementar elem, que checkea si un valor está presente en una lista.
 elem' :: (Eq a) => a -> [a] -> Bool
-elem y ys = foldl (\acc x -> if x == y then True else acc) False ys
+elem' y ys = foldl (\acc x -> if x == y then True else acc) False ys
 
 -- La idea acá es similar. Tenemos la función binaria lambda \acc x -> if x == y then True else acc y el acumulador inicial False
 -- Entonces, esto va a tomar la cabeza de lista, fijarse si es el elemento que estamos buscando, si lo es devuelve True.
 -- Si no lo es devuelve el acumulador, que es el que se va moviendo por la lista revisando todos los elementos.
--- Lo importante de aca es que, si querés recorrer una lista para devolver algo, los folds son cracks.
+-- Lo importante de aca es que, si querés recorrer una lista para devolver valor, los folds son cracks.
 
 -- ++++++++++++++++++++++++ FOLDR ++++++++++++++++++++++++ 
 
@@ -90,7 +90,34 @@ elem y ys = foldl (\acc x -> if x == y then True else acc) False ys
 -- La función binaria tiene al acumulador como el segundo parámetro. Osea, en vez de \acc x, sería \x acc, ya que el acumulador arranca desde la derecha.
 -- El resto es idéntico a foldl. 
 
--- Es interesante considerar que el acumulador puede ser cualquier tipo (Bool, Int, lista de A, etc).
+-- Es interesante considerar que el acumulador puede ser cualquier tipo (Bool, Int, lista de A, etc). Por ejemplo, se puede reimplementar la función map:
+map' :: (a->b) -> [a] -> [b]
+map' f xs = foldr (\x acc -> f(x):acc) [] xs
+-- El acumulador inicial es la lista vacía, ya que queremos aplicar la función f a todos los elementos de xs.
+-- La función binaria en este caso, aplica f() al último elemento de xs. Recordar que f es la funcion que lleva elementos de a hacia b.
+-- Luego, el resultado de esa función (el nuevo elemento de b), se concatena con el acumulador actual.
+-- El acumulador final entonces resulta toda la lista con la f aplicada.
+
+-- Usualmente se usan right folds cuando se construyen nuevas listas desde otra lista.
+-- Es un uso distinto al de left folds (recorrer lista y devolver valor).
 
 
-main = print(sinVacias[[1], []])
+-- ++++++++++++++++++++++++ FOLDL1 y FOLDR1 ++++++++++++++++++++++++ 
+
+-- Iguales a sus contrapartes foldl/foldr, sólo que no necesitan un valor inicial explícito.
+-- Por defecto, toman el primer (o último) elemento de la lista como valor inicial (el acumulador). 
+-- Por ejemplo, se puede reescribir sum como:
+sum''' = foldl1 (+)
+
+-- foldl1/foldr1 son buenos en caso de que la solución con foldl/foldr no funcione en el evento de una lista vacía.
+
+
+-- ++++++++++++++++++++++++ SCANL Y SCANR ++++++++++++++++++++++++ 
+
+-- Son como foldl/foldr, tienen como bonus que notifican los estados del acumulador en cada paso, durante toda la iteración.
+-- También hay scanl1/scanr1, misma idea que con los folds.
+
+-- Ejemplo scanl (+) 0 [3,5,2,1] = [0,3,8,10,11]
+-- Ejemplo scanr (+) 0 [3,5,2,1] = [11,8,3,1,0]
+
+main = print(1:[5,4])
