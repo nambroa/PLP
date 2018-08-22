@@ -35,7 +35,6 @@ flip f = \x y -> f y x
 -- ROT13 es un esquema de criptografı́a muy sencillo que consiste en
 -- reemplazar cada caracter con el caracter que aparece 13 lugares después
 -- en el alfabeto. Básicamente, rot13(a) = char ((#a + 13) mód 26).
--- Ni me voy a molestar en entender esto
 rot13 :: Char -> Char
 rot13 = chr . (flip mod 26) . (+13) . (- ord ’a’) . ord
 
@@ -57,7 +56,3 @@ rot13 = chr . (flip mod 26) . (+13) . (- ord ’a’) . ord
 -- !! :: [a] -> a -> a = Devuelve el elemento de la lista en el índice (segundo parámetro). Los índices arrancan desde 0
 losIesimos :: [Int] -> [[a] -> a]
 losIesimos xs = map (flip(!!)) xs
-
-
-
--- filter
