@@ -43,6 +43,17 @@
 -- Comportamiento: Acepta una lista de listas y las concatena.
 -- Ejemplos: concat[[1,2,3], [1,2,3]] = [1,2,3,1,2,3]
 
+-- map
+-- Tipo (a -> b) -> [a] -> [b]
+-- Comportamiento: Toma una función que pasa elementos de "a" a elemnentos de "b" y una lista de elementos de "a". Devuelve una lista de elementos de "b",
+-- correspondiente a la lista anterior de "a" con la función aplicada a todos sus elementos.
+
+
+-- concatMap
+-- Tipo (a -> [b]) -> [a] -> [b]
+-- Comportamiento: como concat y map compuestos. Mapea una funcion sobre una lista y concatena los resultados. La diferencia con map es que no te devuelve una lista!
+-- Ejemplos: concatMap (++"! ") ["one", "two", "three"] = "one! two! three! " es lo mismo que concat $ map (++"! ") ["one", "two", "three"] = "one! two! three! "
+
 -- !!
 -- Tipo [a] -> a -> a
 -- Comportamiento: Devuelve el elemento de la lista en el índice (segundo parámetro). Los índices arrancan desde 0
