@@ -121,3 +121,5 @@ sum''' = foldl1 (+)
 -- Ejemplo scanr (+) 0 [3,5,2,1] = [11,8,3,1,0]
 
 main = print(1:[5,4])
+
+partes x:xs = foldr(\x acc->acc ++ map (x:) acc) [[]]
