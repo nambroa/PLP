@@ -20,11 +20,13 @@ sacarUna y xs = sacarUnaAux y xs []
 
 -- Ahora una definicion de la funcion que usa recr (asumo que es lo que se quiere)
 --sacarUnaPosta :: Eq a => a -> [a] -> [a]
---sacarUnaPosta x = recr(\y ys rec -> if (x==y) then ys else y:rec) []
+--sacarUnaPosta x xs = recr(\y ys rec -> if (x==y) then ys else y:rec) [] xs
+
 
 -- II) Explicar por qué el esquema foldr no es adecuado para implementar la función sacarUna del punto anterior.
 
 -- Foldr no te deja hacer recursión tomando en cuenta la cola de la lista, sólamente toma en cuenta el caso anterior.
+-- Recr toma en cuenta ambo.s
 
 main = do
 	print("--------------------------- TESTEANDO PUNTO I ---------------------------")
