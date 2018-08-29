@@ -120,6 +120,64 @@ sum''' = foldl1 (+)
 -- Ejemplo scanl (+) 0 [3,5,2,1] = [0,3,8,10,11]
 -- Ejemplo scanr (+) 0 [3,5,2,1] = [11,8,3,1,0]
 
-main = print(1:[5,4])
+---------------------------------------------------------- RECURSIÓN ESTRUCTURAL --------------------------------------------------------------------------
 
-partes x:xs = foldr(\x acc->acc ++ map (x:) acc) [[]]
+-- ++++++++++++++++++++++++ PRELUDIO: CASE SYNTAX ++++++++++++++++++++++++ 
+
+-- Para entender la sintaxis de las cláusulas case, es genial este ejemplo:
+
+head' :: [a] -> a  
+head' [] = error "Las listas vacían no tienen cabezas!"  
+head' (x:_) = x  
+
+head'' :: [a] -> a  
+head'' xs = case xs of [] -> error "Las listas vacían no tienen cabezas!"  
+                       (x:_) -> x  
+
+-- Estas funciones son intercambiables. Case es una forma linda de matchear patrones ([], (x:_)) con resultados.
+
+-- Case puede ser intercambiable con la cláusula where. Ejemplo (sacado de learnyouahaskell.com, genios totales):
+
+describeList :: [a] -> String  
+describeList xs = "The list is " ++ case xs of [] -> "empty."  
+                                               [x] -> "a singleton list."   
+                                               xs -> "a longer list."  
+
+describeList :: [a] -> String  
+describeList xs = "The list is " ++ what xs  
+    where what [] = "empty."  
+          what [x] = "a singleton list."  
+          what xs = "a longer list."  
+
+-- ++++++++++++++++++++++++ RECURSIÓN ESTRUCTURAL ++++++++++++++++++++++++ 
+
+-- Un esquema de recursión estructural espera recibir un argumento por cada constructor (para saber qué devolver en cada caso)
+-- y además la estructura que va a recorrer. Ejemplo: foldr es el esquema de recursión estructural para listas.
+
+-- Ejemplo de tipo :
+data AEB a = Hoja a | Bin (AEB a) a (AEB a)
+-- miÁrbol = Bin (Hoja 3) 5 (Bin (Hoja 7) 8 (Hoja 1))
+-- Estamos ante un tipo inductivo con un constructor no recursivo y un constructor recursivo.
+-- Entonces el fold para el AEB sería:
+foldAEB :: (a->b) -> (b->a->b->b) -> AEB a -> b
+foldAEB fHoja fBin t = case t of Hoja n -> fHoja n
+								 Bin t1 n t2 -> fBin (rec t1) n (rec t2) where rec = foldAEB fHoja fBin
+
+-- Qué es esa abominación de la naturaleza? Buena pregunta..
+-- AEB es un árbol binario (you don't say), entonces la idea de foldAEB es recorrer el árbol sin saltearse nada (por eso el case).
+
+-- Recordar que AEB tiene un constructor no recursivo y un constructor recursivo.
+-- El no recursivo es simplemente una hoja, por lo que si una hoja es de tipo a, con una función de tipo a->b lo podemos procesar.
+-- El recursivo es (AEB) Hoja (AEB), por lo que con una funcion de tipo (b->a->b->b) lo podemos procesar.
+-- Entonces, para el fold, vamos a necesitar esas dos funciones para recorrer el AEB. Si no tuvieramos la de la hoja, no podríamos procesar las hojas.
+-- Esas dos funciones son los primeros dos parámetros de foldAEB.
+
+-- El tercer parámetro es el AEB a recorrer, no magic there.
+
+-- Entonces, si t es un AEB o una hoja, usamos la función correspondiente.
+-- Si t es una hoja, con usar fHoja alcanza
+-- Si t es un árbol binario con AEB t1 Hoja n AEB t2, hay que recorrerlo recursivamente para explorar todas las ramas.
+-- Para esto, usamos la función para árboles y le pasamos el árbol como parametro. 
+-- Además, hacemos fold en los árboles t1 y t2 para aplicar la función de la hoja a sus hojas.
+
+main = print(1:[5,4])
