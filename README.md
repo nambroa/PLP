@@ -1,2 +1,2 @@
-# PLP-Haskell
-Functional Programming for University course PLP
+# PLP
+Functional, Object Oriented, and Logic Programming for University Course PLP (Paradigmas de Lenguajes de Programación).
