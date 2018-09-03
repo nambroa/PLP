@@ -8,10 +8,11 @@ import Ej2 (mismosComponentes)
 -- Consideraremos que los animales pueden acceder al árbol desde la izquierda o la derecha , pero
 -- nunca del frente o de atrás, por lo que los modelaremos de la siguiente forma:
 
-data Dirección = Izquierda | Derecha
-data TipoHambre = Gula | Hambre | Inanición
+data Direccion = Izquierda | Derecha
 	deriving (Eq, Ord, Show)
-type Animal = (Int, Dirección, TipoHambre)
+data TipoHambre = Gula | Hambre | Inanicion
+	deriving (Eq, Ord, Show)
+type Animal = (Int, Direccion, TipoHambre)
 
 -- El entero asociado a un animal indica en qué nivel con respecto a la raiz alcanzará al árbol (los animales
 -- pueden saltar desde abajo del árbol o venir volando y posarse en alguna rama).
@@ -39,40 +40,55 @@ type Animal = (Int, Dirección, TipoHambre)
 
 -- Comer el Fruto implica borrar todos los subarboles asociados y transformar el Fruto en Madera.
 
--- En cada altura, se puede entrar desde la izquierda o desde la derecha (acordate que es un Arbol Binario este).
+-- En cada altura, se puede entrar desde la izquierda o desde la derecha.
+-- Creo que este dato es salteable (porque el árbol es binario, toda opción es izquierda o derecha).
 
 -- Asumo que el animal NO puede moverse una vez que llega al árbol. Tampoco puede intentar comer la raíz (pues esta no tiene dirección).
 
 -- Revisar esta lógica:
 -- A) Hay un Fruto en la altura + dirección donde entré al árbol.
--- B) Si mi estado es hambriento --> Tengo Flor en subarbol  SI--> No pasa nada, animal pasa a Goloso
+-- SI EL FRUTO EXISTE:
+-- B) Si mi estado es Gula --> No pasa nada
+-- C) Si mi estado es Inanicion --> Como el Fruto
+-- D) Si mi estado es hambriento --> Tengo Flor en subarbol  SI--> No pasa nada, animal pasa a Goloso
 --														     NO--> Como el Fruto
--- C) Si mi estado es goloso --> No pasa nada
--- D) Si mi estado es Inanicion --> Como el fruto
--- E) Cualquier otra cosa --> No pasa nada
+-- E) Cualquier otra cosa --> Como el Fruto
 
--- +++++++++++++++ PUNTO A) +++++++++++++++ 
+-- Función que te devuelve el subárbol ts ubicado en la altura pasada como parámetro.
+-- PRE: La altura y direcciones son válidas para el árbol pasado como parámetro. 
+subArbolEnAltura :: Arbol -> Int -> Direccion -> Arbol
+subArbolEnAltura t alt dir = case t of
+	Brote c -> if alt == 0 then Brote c else error "Altura invalida."
+	Rama c t1 t2 -> if alt == 0 then (Rama c t1 t2) else (subArbolEnAltura tj (alt-1) dir)
+						where tj = if dir == Izquierda then t1 else t2
 
--- Función que te devuelve el subárbol ts ubicado en la altura pasada como parámetro
-subArbolEnAltura :: Arbol -> Int -> Arbol
-subArbolEnAltura t alt = t
+-- Función que come a partir de una altura. Transforma el fruto de esa altura en madera y remueve lo demás.
+-- PRE: Hay un fruto comestible en esa altura
+comerEnAltura :: Arbol -> Int -> Arbol
+comerEnAltura t alt = t -- TERMINAR
 
-revisarProfundamente :: Animal -> Arbol -> Arbol -> Arbol
-revisarProfundamente (alt, dir, ham) ts t = t
-
+-- Función que valida el punto A).
 hayFrutoEnLaCopa :: Arbol -> Bool
-hayFrutoEnLaCopa t = True
+hayFrutoEnLaCopa t = case t of
+	Brote c -> if c == Fruto then True else False
+	Rama c t1 t2 -> if c == Fruto then True else False
+
+-- Función que valida el punto B).
+revisarGula :: Animal -> Arbol -> Arbol -> Arbol
+revisarGula (alt, dir, ham) ts t = if ham == Gula then t else revisarInanicion (alt,dir,ham) ts t
+
+-- Función que valida el punto C)
+revisarInanicion :: Animal -> Arbol -> Arbol -> Arbol
+revisarInanicion (alt, dir, ham) ts t = if ham == Inanicion then comerEnAltura t alt else revisarHambriento (alt,dir,ham) ts t
+
+-- Función que valida el punto D)
+revisarHambriento :: Animal -> Arbol -> Arbol -> Arbol
+revisarHambriento (alt, dir, ham) ts t = if ham == Hambriento then t else comerEnAltura t alt -- TERMINAR
 
 comer :: Animal -> Arbol -> Arbol
-comer (alt, dir, hamb) t = if hayFrutoEnLaCopa(subarbol) then revisarProfundamente (alt,dir,hamb) subarbol t else t
-						       where subarbol = subArbolEnAltura t alt
-
+comer (alt, dir, hamb) t = if hayFrutoEnLaCopa subarbol then revisarGula (alt,dir,hamb) subarbol t else t
+						       where subarbol = subArbolEnAltura t alt dir
 
 main = do
-	print("Hello there.")
-
-
--- Te dice la altura del subarbol ts dentro del arbol t1
-altura :: Arbol -> Arbol -> Int
-altura (Rama c1 t1 t2) (Rama cs1 ts1 ts2) = if ((c1 == cs1) && (mismosComponentes ts1 t1) && (mismosComponentes ts2 t2)) then 2 else 3
-altura (Brote c1) (Brote cs1) = if c1 == cs1 then 2 else 3
+	print("Hello there!")
+	print("General Kenobi..")
