@@ -1,8 +1,7 @@
+module Ej1 where
+import Base
 -- Implementar el esquema de recursión estructural sobre los árboles (foldArbol) y dar su tipo.
--- Por ser este un esquema de recursión, se permite utilizar recursión explı́cita para definirlo.
-
-data Componente = Madera | Hoja | Fruto | Flor
-data Arbol = Rama Componente Arbol Arbol | Brote Componente
+-- Por ser este un esquema de recursión, se permite utilizar recursión explıcita para definirlo.
 
 -- Como la idea de la recursión estructural es recibir un argumento por cada constructor (para saber qué devolver en cada caso)
 -- y además la estructura que va a recorrer, se que foldArbol va a recibir 3 argumentos.
