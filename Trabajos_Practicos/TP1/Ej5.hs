@@ -1,6 +1,7 @@
 module Ej5 where
 import Base
 import Ej1 (foldArbol)
+import Ej2 (mismosComponentes)
 
 ------------------------------------------------------- ENUNCIADO RESUMEN --------------------------------------------------------------------
 
@@ -9,6 +10,7 @@ import Ej1 (foldArbol)
 
 data Dirección = Izquierda | Derecha
 data TipoHambre = Gula | Hambre | Inanición
+	deriving (Eq, Ord, Show)
 type Animal = (Int, Dirección, TipoHambre)
 
 -- El entero asociado a un animal indica en qué nivel con respecto a la raiz alcanzará al árbol (los animales
@@ -33,4 +35,44 @@ type Animal = (Int, Dirección, TipoHambre)
 -- Para este ejercicio puede utilizarse recursión explıcita. Se debe explicar en un comentario por
 -- qué el esquema foldArbol no es adecuado para esta función.
 
+--------------------------------------------------------- IDEAS -------------------------------------------------------------------------
+
+-- Comer el Fruto implica borrar todos los subarboles asociados y transformar el Fruto en Madera.
+
+-- En cada altura, se puede entrar desde la izquierda o desde la derecha (acordate que es un Arbol Binario este).
+
+-- Asumo que el animal NO puede moverse una vez que llega al árbol. Tampoco puede intentar comer la raíz (pues esta no tiene dirección).
+
+-- Revisar esta lógica:
+-- A) Hay un Fruto en la altura + dirección donde entré al árbol.
+-- B) Si mi estado es hambriento --> Tengo Flor en subarbol  SI--> No pasa nada, animal pasa a Goloso
+--														     NO--> Como el Fruto
+-- C) Si mi estado es goloso --> No pasa nada
+-- D) Si mi estado es Inanicion --> Como el fruto
+-- E) Cualquier otra cosa --> No pasa nada
+
+-- +++++++++++++++ PUNTO A) +++++++++++++++ 
+
+-- Función que te devuelve el subárbol ts ubicado en la altura pasada como parámetro
+subArbolEnAltura :: Arbol -> Int -> Arbol
+subArbolEnAltura t alt = t
+
+revisarProfundamente :: Animal -> Arbol -> Arbol -> Arbol
+revisarProfundamente (alt, dir, ham) ts t = t
+
+hayFrutoEnLaCopa :: Arbol -> Bool
+hayFrutoEnLaCopa t = True
+
 comer :: Animal -> Arbol -> Arbol
+comer (alt, dir, hamb) t = if hayFrutoEnLaCopa(subarbol) then revisarProfundamente (alt,dir,hamb) subarbol t else t
+						       where subarbol = subArbolEnAltura t alt
+
+
+main = do
+	print("Hello there.")
+
+
+-- Te dice la altura del subarbol ts dentro del arbol t1
+altura :: Arbol -> Arbol -> Int
+altura (Rama c1 t1 t2) (Rama cs1 ts1 ts2) = if ((c1 == cs1) && (mismosComponentes ts1 t1) && (mismosComponentes ts2 t2)) then 2 else 3
+altura (Brote c1) (Brote cs1) = if c1 == cs1 then 2 else 3
