@@ -9,7 +9,6 @@ masPesado :: [Arbol] -> Arbol
 masPesado ts = foldr (\t acc -> if peso(t) > peso(acc) then t else acc) (Brote Flor) ts
 
 main = do
-
 	print("Un Brote de Madera es mas pesado que otro de Flor o de Hoja:")
 	print(masPesado [(Brote Madera), (Brote Flor), (Brote Hoja)])
 	print("Un Arbol de 3 Maderas es mas pesado que otro de 2:")
