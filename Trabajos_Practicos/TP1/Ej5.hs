@@ -41,7 +41,7 @@ type Animal = (Int, Direccion, TipoHambre)
 -- Comer el Fruto implica borrar todos los subarboles asociados y transformar el Fruto en Madera.
 
 -- En cada altura, se puede entrar desde la izquierda o desde la derecha.
--- Creo que este dato es salteable (porque el árbol es binario, toda opción es izquierda o derecha).
+-- Esto es clave, sólo se puede comer desde los extremos, nada del medio!
 
 -- Asumo que el animal NO puede moverse una vez que llega al árbol. Tampoco puede intentar comer la raíz (pues esta no tiene dirección).
 
@@ -54,6 +54,10 @@ type Animal = (Int, Direccion, TipoHambre)
 --														     NO--> Como el Fruto
 -- E) Cualquier otra cosa --> Como el Fruto
 
+-- Pone a t2 al final de t1 en la dirección indicada.
+ponerAlFinalDelArbol :: Arbol -> Direccion -> Arbol -> Arbol
+ponerAlFinalDelArbol t1 dir t2 = t1
+
 -- Función que te devuelve el subárbol ts ubicado en la altura pasada como parámetro.
 -- PRE: La altura y direcciones son válidas para el árbol pasado como parámetro. 
 subArbolEnAltura :: Arbol -> Int -> Direccion -> Arbol
@@ -63,9 +67,16 @@ subArbolEnAltura t alt dir = case t of
 						where tj = if dir == Izquierda then t1 else t2
 
 -- Función que come a partir de una altura. Transforma el fruto de esa altura en madera y remueve lo demás.
--- PRE: Hay un fruto comestible en esa altura
-comerEnAltura :: Arbol -> Int -> Arbol
-comerEnAltura t alt = Brote Madera
+-- PRE: Hay un fruto comestible en esa altura. Las alturas arrancan en 0 para la raíz!
+-- La lógica asociada implica reconstruir el árbol, considerando que en el lugar del fruto comido va a haber madera.
+-- Por eso el segundo parámetro (ts) debe ser siempre la raíz de t.
+comerEnAltura :: Arbol -> Arbol -> Direccion ->Int -> Arbol
+comerEnAltura t ts dir alt = case t of
+	-- Hay que construir t + Brote Madera (osea cortar en ts)
+	Brote Fruto -> if alt == 0 then ponerAlFinalDelArbol ts dir (Brote Madera) else ponerAlFinalDelArbol ts dir (Brote Fruto)
+	Brote c -> ponerAlFinalDelArbol ts dir (Brote c)
+	Rama Fruto t1 t2 -> if alt == 0 then ponerAlFinalDelArbol ts dir (Brote Madera) else ponerAlFinalDelArbol ts dir (Rama Fruto t1 t2)
+	Rama c t1 t2 -> ponerAlFinalDelArbol ts dir (Rama c t1 t2)
 
 -- Función que valida el punto A).
 hayFrutoEnLaCopa :: Arbol -> Bool
@@ -79,16 +90,19 @@ revisarGula (alt, dir, ham) ts t = if ham == Gula then t else revisarInanicion (
 
 -- Función que valida el punto C)
 revisarInanicion :: Animal -> Arbol -> Arbol -> Arbol
-revisarInanicion (alt, dir, ham) ts t = if ham == Inanicion then comerEnAltura t alt else revisarHambre (alt,dir,ham) ts t
+revisarInanicion (alt, dir, ham) ts t = if ham == Inanicion then comerEnAltura t ts dir alt else revisarHambre (alt,dir,ham) ts t
 
 -- Función que valida el punto D)
 revisarHambre :: Animal -> Arbol -> Arbol -> Arbol
-revisarHambre (alt, dir, ham) ts t = if ham == Hambre && (perfume ts >= 1) then t else comerEnAltura t alt
+revisarHambre (alt, dir, ham) ts t = if ham == Hambre && (perfume ts >= 1) then t else comerEnAltura t ts dir alt
 
 comer :: Animal -> Arbol -> Arbol
 comer (alt, dir, hamb) t = if hayFrutoEnLaCopa subarbol then revisarGula (alt,dir,hamb) subarbol t else t
 						       where subarbol = subArbolEnAltura t alt dir
 
 main = do
+	print("Si el animal tiene Inanicion, come el fruto:")
+	print(subArbolEnAltura (Rama Madera (Rama Fruto (Brote Madera) (Brote Hoja)) (Brote Madera)) 1 Izquierda)
+	print(comer (1,Izquierda,Inanicion) (Rama Madera (Rama Fruto (Brote Madera) (Brote Hoja)) (Brote Madera)))
 	print("Hello there!")
 	print("General Kenobi..")
