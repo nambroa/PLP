@@ -1,7 +1,7 @@
 module Ej5 where
 import Base
 import Ej1 (foldArbol)
-import Ej2 (mismosComponentes)
+import Ej2 (mismosComponentes, perfume)
 
 ------------------------------------------------------- ENUNCIADO RESUMEN --------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ subArbolEnAltura t alt dir = case t of
 -- Función que come a partir de una altura. Transforma el fruto de esa altura en madera y remueve lo demás.
 -- PRE: Hay un fruto comestible en esa altura
 comerEnAltura :: Arbol -> Int -> Arbol
-comerEnAltura t alt = t -- TERMINAR
+comerEnAltura t alt = Brote Madera
 
 -- Función que valida el punto A).
 hayFrutoEnLaCopa :: Arbol -> Bool
@@ -79,11 +79,11 @@ revisarGula (alt, dir, ham) ts t = if ham == Gula then t else revisarInanicion (
 
 -- Función que valida el punto C)
 revisarInanicion :: Animal -> Arbol -> Arbol -> Arbol
-revisarInanicion (alt, dir, ham) ts t = if ham == Inanicion then comerEnAltura t alt else revisarHambriento (alt,dir,ham) ts t
+revisarInanicion (alt, dir, ham) ts t = if ham == Inanicion then comerEnAltura t alt else revisarHambre (alt,dir,ham) ts t
 
 -- Función que valida el punto D)
-revisarHambriento :: Animal -> Arbol -> Arbol -> Arbol
-revisarHambriento (alt, dir, ham) ts t = if ham == Hambriento then t else comerEnAltura t alt -- TERMINAR
+revisarHambre :: Animal -> Arbol -> Arbol -> Arbol
+revisarHambre (alt, dir, ham) ts t = if ham == Hambre && (perfume ts >= 1) then t else comerEnAltura t alt
 
 comer :: Animal -> Arbol -> Arbol
 comer (alt, dir, hamb) t = if hayFrutoEnLaCopa subarbol then revisarGula (alt,dir,hamb) subarbol t else t
