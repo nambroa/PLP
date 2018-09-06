@@ -48,6 +48,10 @@
 -- Comportamiento: Toma una función que pasa elementos de "a" a elemnentos de "b" y una lista de elementos de "a". Devuelve una lista de elementos de "b",
 -- correspondiente a la lista anterior de "a" con la función aplicada a todos sus elementos.
 
+-- filter
+-- Tipo (a -> Bool) -> [a] -> [a]
+-- Comportamiento: Devuelve una lista construida por miembros de la lista en el segundo parámetro que cumplen con la condición del primer parámetro.
+-- Ejemplos: filter (>5) [1,2,3,4,5,6,7,8] = [6,7,8] ;  filter (\x -> length x > 4) ["aaaa","bbbbbbbbbbbbb","cc"] = ["bbbbbbbbbbbbb"]
 
 -- concatMap
 -- Tipo (a -> [b]) -> [a] -> [b]
