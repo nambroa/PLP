@@ -39,7 +39,6 @@ dimensiones :: Arbol -> (Int, Int)
 dimensiones t = (nivel, componentesPorNivel t nivel)
 					where nivel = nivelMasAlto t 
 
-
 main = do
 	print("--------------------------- TESTEANDO PUNTO I ---------------------------")
 	print("(Brote Madera) tiene 1 componente en la raiz:")
@@ -53,6 +52,6 @@ main = do
 	print(dimensiones (Brote Madera))
 	print("(Rama Madera (Rama Flor (Brote Madera) (Brote Hoja)) (Brote Madera)) tiene 2 de largo y 2 de ancho:")
 	print(dimensiones (Rama Madera (Rama Flor (Brote Madera) (Brote Hoja)) (Brote Madera)))
-	
+
 
 
