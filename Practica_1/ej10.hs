@@ -1,4 +1,3 @@
-
 -- I) Redefinir usando foldr las funciones sum, elem, (++), filter y map. 
 -- Le cambio los nombres para que no me los confunda con las funciones de Haskell y me deje correr en el main.
 

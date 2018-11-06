@@ -1,0 +1,94 @@
+nil = {
+	null: true,
+	cons: function(o) {
+		nueva_lista = {
+			null: false,
+			head: o,
+			tail: this,
+		};
+		Object.setPrototypeOf(nueva_lista, this);
+		return nueva_lista;
+	},
+};
+
+lista12 = nil.cons(2).cons(1);
+
+// Ejercicio 2
+console.log("\nEjercicio 2");
+nil.toString = function() {
+	if(this.null) return "[]";
+	else return "[" + this.head + ": " + this.tail.toString() + "]";
+};
+
+console.log(nil.toString());
+console.log(lista12.toString());
+
+// Ejercicio 3
+console.log("\nEjercicio 3");
+nil.length = function() {
+	if (this.null) return 0;
+	else return 1 + this.tail.length();
+};
+
+console.log(nil.length());
+console.log(lista12.length());
+
+// Ejercicio 4
+// Tenemos que hacer un deep clone
+console.log("\nEjercicio 4");
+nil.copy = function() {
+	let copia = Object.assign({}, this);
+	if (!this.null) {
+		copia.tail = this.tail.copy();
+		Object.setPrototypeOf(copia, copia.tail);
+	} else {
+		Object.setPrototypeOf(copia, Object.getPrototypeOf(this));
+	}
+	return copia;
+};
+
+console.log(lista12.copy().toString());
+
+// Ejercicio 5
+console.log("\nEjercicio 5");
+let listaMuyLarga = {};
+Object.setPrototypeOf(listaMuyLarga, nil);
+listaMuyLarga._length = 0;
+listaMuyLarga.length = function() {
+	if (this._length == 0 && !this.null) {
+		this._length = this.tail.length() + 1;
+	}
+	return this._length;
+};
+
+console.log(listaMuyLarga.cons(1).cons(3).length());
+console.log(listaMuyLarga.copy().toString());
+
+
+// Ejercicio 6
+console.log("\nEjercicio 6");
+nil.concatenar = function(otra_lista) {
+	let nueva_lista = {};
+	if (!this.null) {
+		let tail_nueva_lista = this.tail.concatenar(otra_lista);
+		nueva_lista = tail_nueva_lista.cons(this.head);
+	} else {
+		if (otra_lista.null) {
+			// Si otra_lista es null y nosotros somos null,
+			// quiere decir que debemos devolver una lista vacía.
+			// Directamente nos copiamos.
+			nueva_lista = Object.create(this);
+		} else {
+			nueva_lista = otra_lista.copy();
+			Object.setPrototypeOf(nueva_lista, this);
+			nueva_lista.length();
+		}
+	}
+	return nueva_lista;
+};
+
+listaMuyLarga53 = listaMuyLarga.cons(3).cons(5);
+lista1253 = lista12.concatenar(listaMuyLarga53);
+console.log(lista1253.toString());
+listaMuyLarga5312 = listaMuyLarga53.concatenar(lista12);
+console.log(listaMuyLarga5312.toString());
